@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Born to Ball — Creative Club</title>
+  <style>
+    /* ── FONTS ── */
+    @font-face {
+      font-family: 'F37Judge';
+      src: url('fonts/F37Judge-Bold.woff') format('woff');
+      font-weight: 700; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SpaceGrotesk';
+      src: url('fonts/SpaceGrotesk_wght_.woff2') format('woff2');
+      font-weight: 100 900; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SpaceGrotesk';
+      src: url('fonts/SpaceGrotesk-Light.woff2') format('woff2');
+      font-weight: 300; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SpaceGrotesk';
+      src: url('fonts/SpaceGrotesk-Regular.woff2') format('woff2');
+      font-weight: 400; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SpaceGrotesk';
+      src: url('fonts/SpaceGrotesk-Medium.woff2') format('woff2');
+      font-weight: 500; font-style: normal;
+    }
+    @font-face {
+      font-family: 'SpaceGrotesk';
+      src: url('fonts/SpaceGrotesk-Bold.woff2') format('woff2');
+      font-weight: 700; font-style: normal;
+    }
+
+    :root {
+      --black:  #000000;
+      --white:  #FDFFFD;
+      --red:    #F33909;
+      --blue:   #001EFF;
+      --dim:    rgba(253,255,253,0.4);
+      --border: rgba(253,255,253,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'SpaceGrotesk', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.3rem 3rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(0,0,0,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'F37Judge', sans-serif;
+      font-size: 1.1rem; letter-spacing: 0.1em;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em;
+      color: var(--dim); text-decoration: none;
+      display: inline-block;
+      transition: color 0.2s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-links a:hover { color: var(--red); transform: skewX(-8deg); }
+    .nav-links a.active { color: var(--white); }
+
+    /* ── SCROLL CONTAINER ── 
+       Free scroll with momentum — JS handles the snap-to-section
+       on threshold. CSS snap is OFF so scroll feels natural. */
+    #scroll-container {
+      height: 100vh;
+      overflow-y: scroll;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    #scroll-container::-webkit-scrollbar { display: none; }
+
+    /* ── SECTIONS COMMON ── */
+    section {
+      height: 100vh;
+      padding: 100px 6vw 60px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--black);
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════
+       BLUE GEOMETRIC ELEMENTS
+    ══════════════════════════════════════ */
+
+    /* Animated rotating square — home top-right corner */
+    .geo-square {
+      position: absolute;
+      border: 1.5px solid var(--blue);
+      pointer-events: none;
+    }
+
+    /* Solid blue pill / bar accent */
+    .geo-bar {
+      position: absolute;
+      background: var(--blue);
+      pointer-events: none;
+    }
+
+    /* Blue circle outline */
+    .geo-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue);
+      pointer-events: none;
+    }
+
+    /* Blue dot cluster */
+    .geo-dot {
+      position: absolute;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      pointer-events: none;
+    }
+
+    /* ── HOME ── */
+    #home { justify-content: flex-end; padding-bottom: 9vh; }
+
+    /* red glow top right */
+    #home::before {
+      content: ''; position: absolute; top: -10vh; right: -5vw;
+      width: 55vw; height: 65vh;
+      background: radial-gradient(ellipse at top right, rgba(243,57,9,0.13) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    /* subtle blue glow bottom-left */
+    #home::after {
+      content: ''; position: absolute; bottom: -5vh; left: -5vw;
+      width: 42vw; height: 50vh;
+      background: radial-gradient(ellipse at bottom left, rgba(0,30,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .home-rule {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--red), var(--blue), transparent);
+    }
+    .home-content { position: relative; z-index: 1; }
+    .home-title {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(5.5rem, 14vw, 15rem);
+      line-height: 0.9; letter-spacing: -0.01em;
+      color: var(--white); display: block; margin-bottom: 1.2rem;
+    }
+    .home-title .ball-word {
+      color: var(--red); display: inline-block;
+      transform: skewX(-8deg); transform-origin: left bottom;
+    }
+    .home-sub {
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: clamp(0.85rem, 1.5vw, 1.1rem); font-weight: 300;
+      letter-spacing: 0.35em; color: var(--dim);
+      text-transform: uppercase; display: inline-block;
+      transform: skewX(-8deg); transform-origin: left;
+    }
+
+    /* rotating blue square top-right of home */
+    #home .geo-square.s1 {
+      top: 12vh; right: 8vw;
+      width: 80px; height: 80px;
+      animation: spinSlow 18s linear infinite;
+    }
+    /* smaller inner square */
+    #home .geo-square.s2 {
+      top: 12vh; right: 8vw;
+      width: 50px; height: 50px;
+      margin: 15px;
+      animation: spinSlow 12s linear infinite reverse;
+      border-color: rgba(0,30,255,0.4);
+    }
+    /* blue bar strip left edge */
+    #home .geo-bar.b1 {
+      left: 0; top: 30vh;
+      width: 3px; height: 18vh;
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── ABOUT ── */
+    #about { border-top: 1px solid var(--border); justify-content: center; padding-top: 80px; }
+    #about::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, rgba(243,57,9,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    /* blue diagonal stripe bottom-right */
+    #about .geo-bar.b1 {
+      right: 6vw; bottom: 8vh;
+      width: 120px; height: 2px;
+      transform: skewX(-8deg);
+    }
+    #about .geo-bar.b2 {
+      right: 6vw; bottom: calc(8vh + 10px);
+      width: 70px; height: 2px;
+      transform: skewX(-8deg);
+      opacity: 0.4;
+    }
+    /* blue dot cluster top right */
+    #about .geo-dot.d1 { top: 15vh; right: 8vw; }
+    #about .geo-dot.d2 { top: 15vh; right: calc(8vw + 14px); opacity: 0.5; }
+    #about .geo-dot.d3 { top: calc(15vh + 14px); right: 8vw; opacity: 0.5; }
+    #about .geo-dot.d4 { top: calc(15vh + 14px); right: calc(8vw + 14px); opacity: 0.25; }
+
+    .about-inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      height: 100%;
+    }
+    .about-line {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(2.8rem, 6.5vw, 7.5rem);
+      line-height: 0.95; letter-spacing: -0.02em;
+      color: var(--white); display: block;
+    }
+    .about-line.red { color: var(--red); }
+    .about-line.skewed { display: inline-block; transform: skewX(-8deg); transform-origin: left; }
+
+    /* ── TEAM ── */
+    #team { border-top: 1px solid var(--border); }
+    /* blue circle top-right */
+    #team .geo-circle.c1 {
+      top: 10vh; right: 5vw;
+      width: 160px; height: 160px;
+      opacity: 0.25;
+    }
+    #team .geo-circle.c2 {
+      top: calc(10vh + 30px); right: calc(5vw + 30px);
+      width: 100px; height: 100px;
+      opacity: 0.12;
+    }
+    /* blue bar bottom strip */
+    #team .geo-bar.b1 {
+      bottom: 0; left: 0; right: 0;
+      height: 2px; width: 100%;
+      background: linear-gradient(to right, var(--blue), transparent);
+    }
+    .team-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem; position: relative; z-index: 1;
+    }
+    .team-card { overflow: hidden; cursor: pointer; }
+    .team-card img {
+      width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block;
+      filter: grayscale(65%) brightness(0.72);
+      transition: filter 0.55s ease, transform 0.55s ease;
+    }
+    .team-card:hover img { filter: grayscale(0%) brightness(0.95); transform: scale(1.04); }
+    .team-card-info { padding: 0.9rem 0 0; }
+    .team-name {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      color: var(--white); letter-spacing: 0.02em;
+    }
+    .team-role {
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: 0.62rem; font-weight: 400;
+      letter-spacing: 0.15em; color: var(--dim);
+      margin-top: 0.3rem; text-transform: uppercase;
+    }
+
+    /* ── EXPERIENCE ── */
+    #experience { border-top: 1px solid var(--border); }
+    /* blue vertical bar left of text */
+    #experience .geo-bar.b1 {
+      left: 6vw; top: 50%;
+      transform: translateY(-50%);
+      width: 2px; height: 40vh;
+      opacity: 0.5;
+    }
+    /* small rotating square bottom left */
+    #experience .geo-square.s1 {
+      left: 6vw; bottom: 8vh;
+      width: 40px; height: 40px;
+      animation: spinSlow 10s linear infinite;
+      opacity: 0.5;
+    }
+    .exp-inner { position: relative; z-index: 1; max-width: 900px; padding-left: 3rem; }
+    .exp-inner p {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(2.5rem, 5.5vw, 6.5rem);
+      line-height: 1.0; letter-spacing: -0.01em; color: var(--white);
+    }
+    .exp-inner p em {
+      color: var(--red); font-style: normal;
+      display: inline-block; transform: skewX(-8deg); transform-origin: left;
+    }
+    .exp-number {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(8rem, 22vw, 22rem); line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(243,57,9,0.18);
+      position: absolute; right: 4vw; bottom: 3vw;
+      pointer-events: none; user-select: none; transform: skewX(-8deg);
+    }
+
+    /* ── SERVICES ── */
+    #services { border-top: 1px solid var(--border); justify-content: center; }
+    /* blue circle top right */
+    #services .geo-circle.c1 {
+      top: 8vh; right: 6vw;
+      width: 220px; height: 220px;
+      opacity: 0.12;
+    }
+    /* blue filled dot accent */
+    #services .geo-dot.d1 { top: 8vh; left: 6vw; width: 8px; height: 8px; }
+    #services .geo-dot.d2 { top: calc(8vh + 16px); left: 6vw; width: 5px; height: 5px; opacity: 0.5; }
+    .services-inner { position: relative; z-index: 1; width: 100%; }
+    .services-header-text {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(2rem, 4vw, 5rem);
+      line-height: 1.0; color: var(--white); margin-bottom: 3rem;
+    }
+    .services-header-text em {
+      color: var(--red); font-style: normal;
+      display: inline-block; transform: skewX(-8deg);
+    }
+    .services-list { display: flex; flex-direction: column; }
+    .service-row {
+      display: flex; align-items: center; gap: 2rem;
+      padding: 1.5rem 0; border-bottom: 1px solid var(--border);
+      transition: padding-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: default;
+    }
+    .service-row:first-child { border-top: 1px solid var(--border); }
+    .service-row:hover { padding-left: 1.2rem; }
+    .service-row:hover .service-row-name { color: var(--red); }
+    /* blue left border appears on hover */
+    .service-row {
+      border-left: 2px solid transparent;
+      transition: padding-left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  border-color 0.3s;
+    }
+    .service-row:hover { border-left-color: var(--blue); }
+    .service-row-num {
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: 0.6rem; font-weight: 400;
+      letter-spacing: 0.3em; color: var(--dim); min-width: 2.5rem;
+    }
+    .service-row-name {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 3rem);
+      color: var(--white); transition: color 0.3s; letter-spacing: 0.02em;
+    }
+
+    /* ── CONNECT ── */
+    #connect { border-top: 1px solid var(--border); align-items: center; justify-content: center; text-align: center; }
+    #connect::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 50%, rgba(243,57,9,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 50%, rgba(0,30,255,0.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    /* blue diagonal bars top and bottom */
+    #connect .geo-bar.b1 {
+      top: 15vh; left: 6vw;
+      width: 80px; height: 2px;
+      transform: skewX(-8deg);
+    }
+    #connect .geo-bar.b2 {
+      bottom: 15vh; right: 6vw;
+      width: 80px; height: 2px;
+      transform: skewX(-8deg);
+    }
+    /* rotating square behind headline */
+    #connect .geo-square.s1 {
+      width: 300px; height: 300px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(15deg);
+      opacity: 0.04;
+      animation: spinSlow 30s linear infinite;
+      border-width: 1px;
+    }
+    .connect-headline {
+      font-family: 'F37Judge', sans-serif;
+      font-size: clamp(5.5rem, 14vw, 15rem);
+      line-height: 0.9; color: var(--white);
+      position: relative; z-index: 1;
+      margin-bottom: 3.5rem; letter-spacing: -0.01em;
+    }
+    .connect-headline em {
+      color: var(--red); font-style: normal;
+      display: inline-block; transform: skewX(-8deg);
+    }
+    .connect-btn {
+      display: inline-block; padding: 1rem 3rem;
+      background: transparent; color: var(--white);
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.25em; text-decoration: none; text-transform: uppercase;
+      border: 1px solid rgba(253,255,253,0.35);
+      position: relative; z-index: 1;
+      transition: background 0.3s, color 0.3s, border-color 0.3s,
+                  transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .connect-btn:hover { background: var(--red); border-color: var(--red); transform: skewX(-8deg); }
+    .footer-line {
+      position: absolute; bottom: 2rem; left: 0; right: 0; text-align: center;
+      font-family: 'SpaceGrotesk', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.15em; color: var(--dim); z-index: 1;
+    }
+
+    /* ── FADE-IN ── */
+    .fade-in {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-in.delay-1 { transition-delay: 0.1s; }
+    .fade-in.delay-2 { transition-delay: 0.2s; }
+    .fade-in.delay-3 { transition-delay: 0.32s; }
+    .fade-in.delay-4 { transition-delay: 0.44s; }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .nav-links a { font-size: 0.6rem; }
+      .team-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .about-line { font-size: clamp(2rem, 8vw, 5rem); }
+    }
+    @media (max-width: 560px) { .nav-links { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#home" class="nav-logo">BORN TO <span>BALL</span></a>
+    <ul class="nav-links">
+      <li><a href="#home"       data-section="home">[Home]</a></li>
+      <li><a href="#about"      data-section="about">[About]</a></li>
+      <li><a href="#team"       data-section="team">[Team]</a></li>
+      <li><a href="#experience" data-section="experience">[Experience]</a></li>
+      <li><a href="#services"   data-section="services">[Services]</a></li>
+      <li><a href="#connect"    data-section="connect">[Connect]</a></li>
+    </ul>
+  </nav>
+
+  <div id="scroll-container">
+
+    <!-- HOME -->
+    <section id="home">
+      <div class="home-rule"></div>
+      <!-- blue geometric elements -->
+      <div class="geo-square s1"></div>
+      <div class="geo-square s2"></div>
+      <div class="geo-bar b1"></div>
+      <div class="home-content">
+        <span class="home-title fade-in">Born to <span class="ball-word">Ball</span></span>
+        <span class="home-sub fade-in delay-1">Creative Club</span>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="geo-bar b1"></div>
+      <div class="geo-bar b2"></div>
+      <div class="geo-dot d1"></div>
+      <div class="geo-dot d2"></div>
+      <div class="geo-dot d3"></div>
+      <div class="geo-dot d4"></div>
+      <div class="about-inner">
+        <span class="about-line fade-in">We're a creative agency</span>
+        <span class="about-line fade-in delay-1">built by former</span>
+        <span class="about-line red skewed fade-in delay-2">professional athletes,</span>
+        <span class="about-line fade-in delay-3">award-winning creatives</span>
+        <span class="about-line fade-in delay-4">&amp; senior strategists.</span>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="team">
+      <div class="geo-circle c1"></div>
+      <div class="geo-circle c2"></div>
+      <div class="geo-bar b1"></div>
+      <div class="team-grid">
+        <div class="team-card fade-in">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&auto=format&fit=crop&q=80" alt="Ruth" />
+          <div class="team-card-info">
+            <div class="team-name">Ruth</div>
+            <div class="team-role">Creative Director</div>
+          </div>
+        </div>
+        <div class="team-card fade-in delay-1">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&auto=format&fit=crop&q=80" alt="Hannah" />
+          <div class="team-card-info">
+            <div class="team-name">Hannah</div>
+            <div class="team-role">Head of New Business</div>
+          </div>
+        </div>
+        <div class="team-card fade-in delay-2">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80" alt="Kristy" />
+          <div class="team-card-info">
+            <div class="team-name">Kristy</div>
+            <div class="team-role">Strategic Advisor</div>
+          </div>
+        </div>
+        <div class="team-card fade-in delay-3">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80" alt="Hamza" />
+          <div class="team-card-info">
+            <div class="team-name">Hamza</div>
+            <div class="team-role">CEO</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="geo-bar b1"></div>
+      <div class="geo-square s1"></div>
+      <div class="exp-inner fade-in">
+        <p>With a combined experience spanning over <em>40 years</em>, we have delivered for the biggest names in sports.</p>
+      </div>
+      <div class="exp-number">40</div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="geo-circle c1"></div>
+      <div class="geo-dot d1"></div>
+      <div class="geo-dot d2"></div>
+      <div class="services-inner">
+        <div class="services-header-text fade-in">What we can<br /><em>do for you</em></div>
+        <div class="services-list">
+          <div class="service-row fade-in delay-1">
+            <span class="service-row-num">01</span>
+            <span class="service-row-name">Brand &amp; Creative Strategy</span>
+          </div>
+          <div class="service-row fade-in delay-2">
+            <span class="service-row-num">02</span>
+            <span class="service-row-name">Content &amp; Campaigns</span>
+          </div>
+          <div class="service-row fade-in delay-3">
+            <span class="service-row-num">03</span>
+            <span class="service-row-name">Sport Partnerships &amp; Activations</span>
+          </div>
+          <div class="service-row fade-in delay-4">
+            <span class="service-row-num">04</span>
+            <span class="service-row-name">PR &amp; Earned Media</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONNECT -->
+    <section id="connect">
+      <div class="geo-square s1"></div>
+      <div class="geo-bar b1"></div>
+      <div class="geo-bar b2"></div>
+      <h2 class="connect-headline fade-in">Let's<br /><em>Ball</em></h2>
+      <a href="mailto:hello@borntoball.com" class="connect-btn fade-in delay-1">Get In Touch</a>
+      <p class="footer-line">© 2025 Born to Ball — Creative Club</p>
+    </section>
+
+  </div>
+
+  <script>
+    const container = document.getElementById('scroll-container');
+    const sections  = Array.from(document.querySelectorAll('section'));
+    const navLinks  = Array.from(document.querySelectorAll('.nav-links a'));
+
+    let currentIndex = 0;
+    let isSnapping   = false;
+    let snapTimer    = null;
+
+    /* ── BOUNCE EASING
+       Overshoots slightly then settles — like a ball landing.
+       t: 0→1, returns position value (can exceed 1 briefly) */
+    function easeOutBounce(t) {
+      const n1 = 7.5625, d1 = 2.75;
+      if (t < 1/d1)       return n1 * t * t;
+      else if (t < 2/d1)  return n1 * (t -= 1.5/d1)  * t + 0.75;
+      else if (t < 2.5/d1)return n1 * (t -= 2.25/d1) * t + 0.9375;
+      else                 return n1 * (t -= 2.625/d1)* t + 0.984375;
+    }
+
+    /* Ease-in then bounce-out — scroll in, land with a bounce */
+    function easeInBounce(t) {
+      return 1 - easeOutBounce(1 - t);
+    }
+
+    function easeInThenBounce(t) {
+      // First third: ease in (accelerate away from current section)
+      // Last two thirds: bounce out into new section
+      if (t < 0.35) {
+        const t2 = t / 0.35;
+        return 0.35 * (t2 * t2 * t2); // cubic ease-in
+      } else {
+        const t2 = (t - 0.35) / 0.65;
+        return 0.35 + 0.65 * easeOutBounce(t2);
+      }
+    }
+
+    function animateScrollTo(targetY, duration) {
+      const startY   = container.scrollTop;
+      const distance = targetY - startY;
+      const start    = performance.now();
+
+      function step(now) {
+        const elapsed  = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased    = easeInThenBounce(progress);
+        container.scrollTop = startY + distance * eased;
+        if (progress < 1) requestAnimationFrame(step);
+        else {
+          container.scrollTop = targetY; // ensure exact landing
+          isSnapping = false;
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    function snapTo(index) {
+      if (index < 0 || index >= sections.length || isSnapping) return;
+      isSnapping   = true;
+      currentIndex = index;
+      /* Longer duration = bouncier feel. 1100–1400ms range. */
+      animateScrollTo(sections[index].offsetTop, 1250);
+      setActiveNav(sections[index].id);
+      revealSection(sections[index]);
+    }
+
+    function setActiveNav(id) {
+      navLinks.forEach(a => a.classList.toggle('active', a.dataset.section === id));
+    }
+
+    function revealSection(section) {
+      section.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible'));
+    }
+
+    /* ── FREE SCROLL then snap when threshold crossed ──
+       User can scroll freely. Once they've scrolled 18% of viewport height
+       past the midpoint between sections, we snap to the next/prev section. */
+    const THRESHOLD = window.innerHeight * 0.18;
+
+    container.addEventListener('scroll', () => {
+      if (isSnapping) return;
+
+      const scrollY   = container.scrollTop;
+      const sectionH  = window.innerHeight;
+      const nearest   = Math.round(scrollY / sectionH);
+      const nearestY  = nearest * sectionH;
+      const delta     = scrollY - currentIndex * sectionH;
+
+      // If scrolled past threshold, snap
+      if (Math.abs(delta) > THRESHOLD) {
+        const direction = delta > 0 ? 1 : -1;
+        const target    = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+        if (target !== currentIndex) {
+          snapTo(target);
+          return;
+        }
+      }
+
+      // Debounce: if user stops scrolling, snap back to nearest
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        if (!isSnapping) snapTo(nearest);
+      }, 120);
+    }, { passive: true });
+
+    /* ── WHEEL — intercept for smoother feel ── */
+    let lastWheelTime = 0;
+    container.addEventListener('wheel', e => {
+      e.preventDefault();
+      if (isSnapping) return;
+      const now = performance.now();
+      if (now - lastWheelTime < 80) return; // debounce rapid events
+      lastWheelTime = now;
+      // Only trigger on intentional scroll (not tiny trackpad drift)
+      if (Math.abs(e.deltaY) < 20) return;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      snapTo(Math.max(0, Math.min(sections.length - 1, currentIndex + dir)));
+    }, { passive: false });
+
+    /* ── TOUCH ── */
+    let touchStartY = 0;
+    container.addEventListener('touchstart', e => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    container.addEventListener('touchend', e => {
+      if (isSnapping) return;
+      const diff = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(diff) > 50) snapTo(currentIndex + (diff > 0 ? 1 : -1));
+    }, { passive: true });
+
+    /* ── KEYBOARD ── */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); snapTo(currentIndex + 1); }
+      if (e.key === 'ArrowUp'   || e.key === 'PageUp')   { e.preventDefault(); snapTo(currentIndex - 1); }
+    });
+
+    /* ── NAV CLICKS ── */
+    navLinks.forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const idx = sections.findIndex(s => s.id === a.dataset.section);
+        snapTo(idx);
+      });
+    });
+
+    /* ── INIT ── */
+    revealSection(sections[0]);
+    setActiveNav('home');
+  </script>
+</body>
+</html>
